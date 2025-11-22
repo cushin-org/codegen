@@ -31,9 +31,9 @@ npm install @tanstack/react-query
 ### 1. Initialize Configuration
 
 ```bash
-npx api-codegen init --provider vite
+npx @cushin/api-codegen init --provider vite
 # or for Next.js
-npx api-codegen init --provider nextjs
+npx @cushin/api-codegen init --provider nextjs
 ```
 
 This creates `api-codegen.config.js`:
@@ -131,7 +131,7 @@ export const apiConfig = defineConfig({
 ### 3. Generate Code
 
 ```bash
-npx api-codegen generate
+npx @cushin/api-codegen generate
 ```
 
 This generates:
@@ -321,16 +321,16 @@ export default {
 
 ```bash
 # Generate code from config
-npx api-codegen generate
+npx @cushin/api-codegen generate
 
 # Generate with specific config file
-npx api-codegen generate --config ./custom.config.js
+npx @cushin/api-codegen generate --config ./custom.config.js
 
 # Initialize new config
-npx api-codegen init --provider nextjs
+npx @cushin/api-codegen init --provider nextjs
 
 # Validate configuration
-npx api-codegen validate
+npx @cushin/api-codegen validate
 ```
 
 ## Advanced Usage

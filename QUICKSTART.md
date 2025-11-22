@@ -11,7 +11,7 @@ npm install @cushin/api-codegen ky zod @tanstack/react-query
 ## Step 1: Initialize Config
 
 ```bash
-npx api-codegen init --provider vite
+npx @cushin/api-codegen init --provider vite
 ```
 
 This creates `api-codegen.config.js`:
@@ -70,7 +70,7 @@ export const apiConfig = defineConfig({
 ## Step 3: Generate Code
 
 ```bash
-npx api-codegen generate
+npx @cushin/api-codegen generate
 ```
 
 This creates:
@@ -172,7 +172,7 @@ npm install @cushin/api-codegen
 
 Run the generate command:
 ```bash
-npx api-codegen generate
+npx @cushin/api-codegen generate
 ```
 
 ### TypeScript errors in generated files

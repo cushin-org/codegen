@@ -73,7 +73,7 @@ dist/                 # Build output
 
    # In your test project
    npm link @cushin/api-codegen
-   npx api-codegen generate
+   npx @cushin/api-codegen generate
    ```
 
 ### Code Style
@@ -149,7 +149,7 @@ Currently manual testing is required. Automated tests coming soon.
 1. Create a test project
 2. Link the package: `npm link @cushin/api-codegen`
 3. Create a test config
-4. Run: `npx api-codegen generate`
+4. Run: `npx @cushin/api-codegen generate`
 5. Verify generated code
 6. Test in both Vite and Next.js projects
 

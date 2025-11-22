@@ -32,8 +32,8 @@ npm link @cushin/api-codegen
 
 Test the CLI:
 ```bash
-npx api-codegen init
-npx api-codegen generate
+npx @cushin/api-codegen init
+npx @cushin/api-codegen generate
 ```
 
 ### 3. Publish to npm

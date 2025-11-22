@@ -108,7 +108,7 @@ program
 
       console.log(chalk.dim('\nNext steps:'));
       console.log(chalk.dim('  1. Update the endpoints path in the config'));
-      console.log(chalk.dim('  2. Run: npx api-codegen generate'));
+      console.log(chalk.dim('  2. Run: npx @cushin/api-codegen generate'));
     } catch (error) {
       spinner.fail(chalk.red('Failed to create configuration file'));
       console.error(
