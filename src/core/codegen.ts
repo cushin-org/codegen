@@ -1,7 +1,8 @@
-import { pathToFileURL } from 'url';
+import { createJiti } from 'jiti';
 import type { APIConfig } from '../config/schema.js';
 import type { ResolvedConfig } from '../config/index.js';
 import { CodeGenerator } from '../generators/index.js';
+import { fileURLToPath } from 'url';
 
 export class CodegenCore {
   constructor(private config: ResolvedConfig) {}
@@ -24,8 +25,12 @@ export class CodegenCore {
 
   private async loadAPIConfig(): Promise<APIConfig> {
     try {
-      const fileUrl = pathToFileURL(this.config.endpointsPath).href;
-      const module = await import(fileUrl);
+      // Use jiti to load TypeScript files
+      const jiti = createJiti(fileURLToPath(import.meta.url), {
+        interopDefault: true,
+      });
+
+      const module = (await jiti.import(this.config.endpointsPath)) as any;
 
       // Try different export patterns
       const apiConfig =
