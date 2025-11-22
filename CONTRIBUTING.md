@@ -14,7 +14,7 @@ Thank you for your interest in contributing! This document provides guidelines f
 1. Fork the repository
 2. Clone your fork:
    ```bash
-   git clone https://github.com/yourusername/api-codegen.git
+   git clone https://github.com/cushin-org/api-codegen.git
    cd api-codegen
    ```
 

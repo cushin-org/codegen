@@ -1,28 +1,9 @@
-# Changelog
+# 1.0.0 (2025-11-22)
 
-All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+### Bug Fixes
 
-## [1.0.0] - 2024-11-23
+* resolve build and npm deployment errors ([cef18d7](https://github.com/hashdotlee/api-codegen/commit/cef18d795e2ac83818b3a06b7bb38bdecc46295b))
 
-### Added
-- Initial release
-- Type-safe API client generation with Zod validation
-- Support for Vite and Next.js providers
-- Automatic React Query hooks generation
-- Server Actions generation for Next.js
-- Server Queries generation with Next.js cache
-- CLI tool with `generate`, `init`, and `validate` commands
-- Token refresh and authentication error handling
-- Support for custom base URLs per endpoint
-- Configurable code generation options
-- Comprehensive documentation and examples
 
-### Features
-- Full TypeScript support
-- Automatic query invalidation based on tags
-- Custom hook prefixes and action suffixes
-- Multiple endpoint modules support
-- Watch mode for development (coming soon)
+

@@ -129,7 +129,7 @@ jobs:
 ## Troubleshooting
 
 ### Package name already exists
-- Choose a different name or use a scope: `@yourusername/api-codegen`
+- Choose a different name or use a scope: `@cushin-org/api-codegen`
 
 ### Permission denied
 - Make sure you're logged in: `npm whoami`
