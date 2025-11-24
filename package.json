@@ -1,104 +1,32 @@
 {
-  "name": "@cushin/api-codegen",
+  "name": "cushin-monorepo",
   "version": "1.1.1",
-  "description": "Type-safe API client generator for React/Next.js with automatic hooks and server actions generation",
+  "description": "Cushin code generators monorepo",
+  "private": true,
   "type": "module",
-  "main": "./dist/index.js",
-  "publishConfig": {
-    "access": "public"
-  },
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "bin": {
-    "api-codegen": "./dist/cli.js"
-  },
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    },
-    "./client": {
-      "types": "./dist/runtime/client.d.ts",
-      "import": "./dist/runtime/client.js"
-    },
-    "./config": {
-      "types": "./dist/config/index.d.ts",
-      "import": "./dist/config/index.js"
-    },
-    "./schema": {
-      "types": "./dist/config/schema.d.ts",
-      "import": "./dist/config/schema.js"
-    }
-  },
-  "files": [
-    "dist",
-    "README.md",
-    "LICENSE"
-  ],
-  "scripts": {
-    "version": "conventional-changelog -p angular && git add CHANGELOG.md",
-    "build": "tsup",
-    "dev": "tsup --watch",
-    "typecheck": "tsc --noEmit",
-    "test": "vitest",
-    "lint": "eslint src",
-    "prepublishOnly": "pnpm build"
-  },
-  "keywords": [
-    "api",
-    "codegen",
-    "typescript",
-    "react",
-    "nextjs",
-    "tanstack-query",
-    "type-safe",
-    "rest-api",
-    "client-generator"
-  ],
-  "author": "Le Viet Hoang",
   "license": "MIT",
+  "author": "Le Viet Hoang",
   "repository": {
     "type": "git",
     "url": "https://github.com/cushin-org/api-codegen.git"
   },
-  "peerDependencies": {
-    "ky": "^1.0.0",
-    "zod": "^3.22.0"
-  },
-  "peerDependenciesMeta": {
-    "@tanstack/react-query": {
-      "optional": true
-    },
-    "next": {
-      "optional": true
-    },
-    "react": {
-      "optional": true
-    }
-  },
-  "dependencies": {
-    "chalk": "^5.3.0",
-    "commander": "^12.0.0",
-    "conventional-changelog": "^7.1.1",
-    "conventional-changelog-angular": "^8.1.0",
-    "cosmiconfig": "^9.0.0",
-    "fast-glob": "^3.3.2",
-    "jiti": "^2.6.1",
-    "ora": "^8.0.0"
-  },
-  "devDependencies": {
-    "@tanstack/react-query": "^5.0.0",
-    "@types/node": "^20.11.0",
-    "eslint": "^8.56.0",
-    "ky": "^1.2.0",
-    "next": "^14.1.0",
-    "react": "^18.2.0",
-    "tsup": "^8.0.0",
-    "typescript": "^5.3.0",
-    "vitest": "^1.2.0",
-    "zod": "^3.25.76"
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "pnpm -r build",
+    "dev": "pnpm -r dev",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "prepublishOnly": "pnpm build"
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.0"
   }
 }

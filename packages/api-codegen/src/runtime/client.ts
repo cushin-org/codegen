@@ -1,19 +1,3 @@
-import fs from "fs/promises";
-import path from "path";
-import { BaseGenerator } from "./base.js";
-
-export class CoreGenerator extends BaseGenerator {
-  async generate(): Promise<void> {
-    const content = this.generateContent();
-    const outputPath = path.join(this.context.config.outputDir, "core.ts");
-
-    await fs.mkdir(path.dirname(outputPath), { recursive: true });
-    await fs.writeFile(outputPath, content, "utf-8");
-  }
-
-  private generateContent(): string {
-    const content = `// Auto-generated schema definitions
-
 import ky, { HTTPError } from "ky";
 import type { APIConfig, APIEndpoint } from "../config/schema.js";
 
@@ -63,7 +47,7 @@ export class APIClient {
           if (tokens?.accessToken) {
             request.headers.set(
               "Authorization",
-              \`Bearer \${tokens.accessToken}\`,
+              `Bearer ${tokens.accessToken}`,
             );
           }
         },
@@ -78,7 +62,7 @@ export class APIClient {
                 if (tokens?.accessToken) {
                   request.headers.set(
                     "Authorization",
-                    \`Bearer \${tokens.accessToken}\`,
+                    `Bearer ${tokens.accessToken}`,
                   );
                 }
               } catch (refreshError) {
@@ -99,7 +83,7 @@ export class APIClient {
             try {
               const body = await response.json();
               error.message =
-                (body as Error).message || \`HTTP \${response.status}\`;
+                (body as Error).message || `HTTP ${response.status}`;
             } catch {
               // Keep original message
             }
@@ -158,7 +142,7 @@ export class APIClient {
     let finalPath = path;
     Object.entries(params).forEach(([key, value]) => {
       finalPath = finalPath.replace(
-        \`:\${key}\`,
+        `:${key}`,
         encodeURIComponent(String(value)),
       );
     });
@@ -326,8 +310,4 @@ export function createAPIClient(
     updateAuthCallbacks: (newCallbacks: AuthCallbacks) =>
       instance.updateAuthCallbacks(newCallbacks),
   };
-}
-`;
-    return content;
-  }
 }

@@ -1,19 +1,3 @@
-import fs from "fs/promises";
-import path from "path";
-import { BaseGenerator } from "./base.js";
-
-export class SchemaGenerator extends BaseGenerator {
-  async generate(): Promise<void> {
-    const content = this.generateContent();
-    const outputPath = path.join(this.context.config.outputDir, "schema.ts");
-
-    await fs.mkdir(path.dirname(outputPath), { recursive: true });
-    await fs.writeFile(outputPath, content, "utf-8");
-  }
-
-  private generateContent(): string {
-    const content = `// Auto-generated schema definitions
-
 import type { z } from 'zod';
 
 export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -84,9 +68,4 @@ export function defineEndpoints<
   T extends Record<string, APIEndpoint>,
 >(endpoints: T): T {
   return endpoints;
-}
-  }
-  `;
-    return content;
-  }
 }

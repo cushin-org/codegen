@@ -1,0 +1,99 @@
+{
+  "name": "@cushin/api-codegen",
+  "version": "1.1.1",
+  "description": "Type-safe API client generator for React/Next.js with automatic hooks and server actions generation",
+  "type": "module",
+  "main": "./dist/index.js",
+  "bin": {
+    "api-codegen": "./dist/cli.js"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./client": {
+      "types": "./dist/runtime/client.d.ts",
+      "import": "./dist/runtime/client.js"
+    },
+    "./config": {
+      "types": "./dist/config/index.d.ts",
+      "import": "./dist/config/index.js"
+    },
+    "./schema": {
+      "types": "./dist/config/schema.d.ts",
+      "import": "./dist/config/schema.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "lint": "eslint src"
+  },
+  "keywords": [
+    "api",
+    "codegen",
+    "typescript",
+    "react",
+    "nextjs",
+    "tanstack-query",
+    "type-safe",
+    "rest-api",
+    "client-generator"
+  ],
+  "author": "Le Viet Hoang",
+  "license": "MIT",
+  "peerDependencies": {
+    "ky": "^1.0.0",
+    "zod": "^3.22.0"
+  },
+  "peerDependenciesMeta": {
+    "@tanstack/react-query": {
+      "optional": true
+    },
+    "next": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "@cushin/cli": "workspace:*",
+    "chalk": "^5.3.0",
+    "commander": "^12.0.0",
+    "conventional-changelog": "^7.1.1",
+    "conventional-changelog-angular": "^8.1.0",
+    "cosmiconfig": "^9.0.0",
+    "fast-glob": "^3.3.2",
+    "jiti": "^2.6.1",
+    "ora": "^8.0.0"
+  },
+  "devDependencies": {
+    "@tanstack/react-query": "^5.0.0",
+    "@types/node": "^20.11.0",
+    "eslint": "^8.56.0",
+    "ky": "^1.2.0",
+    "next": "^14.1.0",
+    "react": "^18.2.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.2.0",
+    "zod": "^3.25.76"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

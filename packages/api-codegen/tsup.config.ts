@@ -1,0 +1,55 @@
+import { defineConfig } from 'tsup';
+
+export default defineConfig([
+  {
+    entry: {
+      index: 'src/index.ts',
+    },
+    format: ['esm'],
+    dts: true,
+    sourcemap: true,
+    clean: true,
+    external: [
+      '@cushin/cli',
+      'ky',
+      'zod',
+      '@tanstack/react-query',
+      'next',
+      'react',
+      'commander',
+      'chalk',
+      'ora',
+      'cosmiconfig',
+      'fast-glob',
+      'jiti',
+      'conventional-changelog',
+      'conventional-changelog-angular',
+    ],
+    shims: true,
+  },
+  {
+    entry: {
+      cli: 'src/cli.ts',
+    },
+    format: ['esm'],
+    dts: false,
+    sourcemap: true,
+    external: [
+      '@cushin/cli',
+      'ky',
+      'zod',
+      '@tanstack/react-query',
+      'next',
+      'react',
+      'commander',
+      'chalk',
+      'ora',
+      'cosmiconfig',
+      'fast-glob',
+      'jiti',
+      'conventional-changelog',
+      'conventional-changelog-angular',
+    ],
+    shims: true,
+  },
+]);
