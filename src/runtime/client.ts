@@ -1,5 +1,5 @@
-import ky, { HTTPError } from 'ky';
-import type { APIConfig, APIEndpoint } from '../config/schema.js';
+import ky, { HTTPError } from "ky";
+import type { APIConfig, APIEndpoint } from "../config/schema.js";
 
 export interface AuthTokens {
   accessToken: string;
@@ -7,11 +7,10 @@ export interface AuthTokens {
 }
 
 export interface AuthCallbacks {
-  getTokens: () => AuthTokens | null;
+  getTokens: () => Promise<AuthTokens | null>;
   setTokens: (tokens: AuthTokens) => void;
-  clearTokens: () => void;
   onAuthError?: () => void;
-  onRefreshToken?: () => Promise<string>;
+  onRefreshToken?: () => Promise<void>;
 }
 
 export class APIError extends Error {
@@ -21,14 +20,14 @@ export class APIError extends Error {
     public response?: any,
   ) {
     super(message);
-    this.name = 'APIError';
+    this.name = "APIError";
   }
 }
 
 export class AuthError extends APIError {
-  constructor(message: string = 'Authentication failed') {
+  constructor(message: string = "Authentication failed") {
     super(message, 401);
-    this.name = 'AuthError';
+    this.name = "AuthError";
   }
 }
 
@@ -44,11 +43,11 @@ export class APIClient {
   ) {
     this.hooks = {
       beforeRequest: [
-        (request: Request) => {
-          const tokens = this.authCallbacks?.getTokens();
+        async (request: Request) => {
+          const tokens = await this.authCallbacks?.getTokens();
           if (tokens?.accessToken) {
             request.headers.set(
-              'Authorization',
+              "Authorization",
               `Bearer ${tokens.accessToken}`,
             );
           }
@@ -60,20 +59,18 @@ export class APIClient {
             if (retryCount === 1 && this.authCallbacks) {
               try {
                 await this.refreshTokens();
-                const tokens = this.authCallbacks.getTokens();
+                const tokens = await this.authCallbacks.getTokens();
                 if (tokens?.accessToken) {
                   request.headers.set(
-                    'Authorization',
+                    "Authorization",
                     `Bearer ${tokens.accessToken}`,
                   );
                 }
               } catch (refreshError) {
-                this.authCallbacks.clearTokens();
                 this.authCallbacks.onAuthError?.();
                 throw new AuthError();
               }
             } else {
-              this.authCallbacks?.clearTokens();
               this.authCallbacks?.onAuthError?.();
               throw new AuthError();
             }
@@ -100,11 +97,11 @@ export class APIClient {
     this.client = ky.create({
       prefixUrl: this.config.baseUrl,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       retry: {
         limit: 2,
-        methods: ['get', 'post', 'put', 'delete', 'patch'],
+        methods: ["get", "post", "put", "delete", "patch"],
         statusCodes: [401],
       },
       hooks: this.hooks,
@@ -113,7 +110,7 @@ export class APIClient {
 
   private async refreshTokens(): Promise<void> {
     if (!this.authCallbacks) {
-      throw new AuthError('No auth callbacks provided');
+      throw new AuthError("No auth callbacks provided");
     }
 
     if (this.isRefreshing && this.refreshPromise) {
@@ -125,12 +122,9 @@ export class APIClient {
     this.refreshPromise = (async () => {
       try {
         if (this.authCallbacks?.onRefreshToken) {
-          const newAccessToken = await this.authCallbacks.onRefreshToken();
-          this.authCallbacks.setTokens({
-            accessToken: newAccessToken,
-          });
+          await this.authCallbacks.onRefreshToken();
         } else {
-          throw new AuthError('No refresh token handler provided');
+          throw new AuthError("No refresh token handler provided");
         }
       } catch (error) {
         throw error;
@@ -171,11 +165,11 @@ export class APIClient {
     return ky.create({
       prefixUrl: endpointBaseUrl,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       retry: {
         limit: 2,
-        methods: ['get', 'post', 'put', 'delete', 'patch'],
+        methods: ["get", "post", "put", "delete", "patch"],
         statusCodes: [401],
       },
       hooks: this.hooks,
@@ -208,7 +202,7 @@ export class APIClient {
         }
       }
 
-      if (body && endpoint.method !== 'GET') {
+      if (body && endpoint.method !== "GET") {
         if (endpoint.body) {
           const validatedBody = endpoint.body.parse(body);
           options.json = validatedBody;
@@ -240,7 +234,7 @@ export class APIClient {
       }
 
       throw new APIError(
-        error instanceof Error ? error.message : 'Network error',
+        error instanceof Error ? error.message : "Network error",
         0,
       );
     }
@@ -252,7 +246,7 @@ export class APIClient {
 
   async refreshAuth(): Promise<void> {
     if (!this.authCallbacks) {
-      throw new AuthError('No auth callbacks provided');
+      throw new AuthError("No auth callbacks provided");
     }
     await this.refreshTokens();
   }
@@ -261,7 +255,7 @@ export class APIClient {
     const methods: any = {};
 
     Object.entries(this.config.endpoints).forEach(([name, endpoint]) => {
-      if (endpoint.method === 'GET') {
+      if (endpoint.method === "GET") {
         if (endpoint.params && endpoint.query) {
           methods[name] = (params: any, query?: any): Promise<any> => {
             return this.request(endpoint, params, query);
