@@ -1,9 +1,11 @@
-import { HooksGenerator } from './hooks.js';
-import { ServerActionsGenerator } from './actions.js';
-import { ServerQueriesGenerator } from './queries.js';
-import { TypesGenerator } from './types.js';
-import { ClientGenerator } from './client.js';
-import type { GeneratorContext } from './base.js';
+import { HooksGenerator } from "./hooks.js";
+import { ServerActionsGenerator } from "./actions.js";
+import { ServerQueriesGenerator } from "./queries.js";
+import { TypesGenerator } from "./types.js";
+import { ClientGenerator } from "./client.js";
+import type { GeneratorContext } from "./base.js";
+import { QueryKeysGenerator } from "./query-keys.js";
+import { QueryOptionsGenerator } from "./query-options.js";
 
 export class CodeGenerator {
   constructor(private context: GeneratorContext) {}
@@ -29,13 +31,15 @@ export class CodeGenerator {
 
     // Generate hooks if enabled
     if (this.context.config.generateHooks) {
+      generators.push(new QueryKeysGenerator(this.context));
+      generators.push(new QueryOptionsGenerator(this.context));
       generators.push(new HooksGenerator(this.context));
     }
 
     // Generate server actions if enabled (Next.js only)
     if (
       this.context.config.generateServerActions &&
-      this.context.config.provider === 'nextjs'
+      this.context.config.provider === "nextjs"
     ) {
       generators.push(new ServerActionsGenerator(this.context));
     }
@@ -43,7 +47,7 @@ export class CodeGenerator {
     // Generate server queries if enabled (Next.js only)
     if (
       this.context.config.generateServerQueries &&
-      this.context.config.provider === 'nextjs'
+      this.context.config.provider === "nextjs"
     ) {
       generators.push(new ServerQueriesGenerator(this.context));
     }

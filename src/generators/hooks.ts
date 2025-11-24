@@ -1,21 +1,27 @@
-import fs from 'fs/promises';
-import path from 'path';
-import { BaseGenerator } from './base.js';
-import type { APIEndpoint } from '../config/schema.js';
+import fs from "fs/promises";
+import path from "path";
+import { BaseGenerator } from "./base.js";
+import type { APIEndpoint } from "../config/schema.js";
 
 export class HooksGenerator extends BaseGenerator {
   async generate(): Promise<void> {
     const content = this.generateContent();
-    const outputPath = path.join(this.context.config.outputDir, 'hooks.ts');
+    const outputPath = path.join(this.context.config.outputDir, "hooks.ts");
 
     await fs.mkdir(path.dirname(outputPath), { recursive: true });
-    await fs.writeFile(outputPath, content, 'utf-8');
+    await fs.writeFile(outputPath, content, "utf-8");
   }
 
   private generateContent(): string {
-    const useClientDirective = this.context.config.options?.useClientDirective ?? true;
-    
-    const imports = `${useClientDirective ? "'use client';\n" : ''}
+    const useClientDirective =
+      this.context.config.options?.useClientDirective ?? true;
+    const outputPath = path.join(this.context.config.outputDir, "types.ts");
+    const endpointsPath = path.join(this.context.config.endpointsPath);
+    const relativePath = path
+      .relative(path.dirname(outputPath), endpointsPath)
+      .replace(/\\/g, "/");
+
+    const content = `${useClientDirective ? "'use client';\n" : ""}
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { 
   UseQueryOptions, 
@@ -30,103 +36,142 @@ import type {
   ExtractQuery, 
   ExtractResponse 
 } from './types';
+import { queryKeys } from './query-keys';
+${this.hasQueryOptions() ? "import { apiQueryOptions } from './query-options';" : ""}
+import { z } from 'zod';
+import { apiConfig } from '${relativePath}';
+
+${this.generateQueryHooks()}
+${this.generateMutationHooks()}
 `;
 
+    return content;
+  }
+
+  private generateQueryHooks(): string {
     const hooks: string[] = [];
-
-    Object.entries(this.context.apiConfig.endpoints).forEach(([name, endpoint]) => {
-      if (this.isQueryEndpoint(endpoint)) {
-        hooks.push(this.generateQueryHook(name, endpoint));
-      } else {
-        hooks.push(this.generateMutationHook(name, endpoint));
-      }
-    });
-
-    return imports + '\n' + hooks.join('\n\n');
+    Object.entries(this.context.apiConfig.endpoints).forEach(
+      ([name, endpoint]) => {
+        if (endpoint.method === "GET")
+          hooks.push(this.generateQueryHook(name, endpoint));
+      },
+    );
+    return hooks.join("\n\n");
   }
 
   private generateQueryHook(name: string, endpoint: APIEndpoint): string {
-    const hookPrefix = this.context.config.options?.hookPrefix || 'use';
-    const hookName = `${hookPrefix}${this.capitalize(name)}`;
-    const signature = this.getEndpointSignature(name, endpoint);
+    const hookName = `use${this.capitalize(name)}`;
+    const resource = this.getResourceFromEndpoint(name, endpoint);
+    const optionName = this.getEndpointKeyName(name);
+    const inferParams = this.inferNonNull(
+      `typeof apiConfig.endpoints.${name}.params`,
+    );
+    const inferQuery = this.inferNonNull(
+      `typeof apiConfig.endpoints.${name}.query`,
+    );
+    const inferResponse = this.inferNonNull(
+      `typeof apiConfig.endpoints.${name}.response`,
+    );
+
+    const params: string[] = [];
+    const optionParams: string[] = [];
+
     const queryTags = this.getQueryTags(endpoint);
 
-    const paramDef = signature.hasParams ? `params: ${signature.paramType}` : '';
-    const queryDef = signature.hasQuery ? `query?: ${signature.queryType}` : '';
-    const optionsDef = `options?: Omit<UseQueryOptions<${signature.responseType}, Error, ${signature.responseType}, QueryKey>, 'queryKey' | 'queryFn'>`;
+    if (endpoint.params) {
+      params.push(`params: ${inferParams}`);
+      optionParams.push("params");
+    }
+    if (endpoint.query) {
+      params.push(`filters?: ${inferQuery}`);
+      optionParams.push("filters");
+    }
 
-    const paramsList = [paramDef, queryDef, optionsDef]
-      .filter(Boolean)
-      .join(',\n  ');
-
-    const queryKeyParts = [
-      ...queryTags.map((tag) => `'${tag}'`),
-      signature.hasParams ? 'params' : 'undefined',
-      signature.hasQuery ? 'query' : 'undefined',
-    ];
-
-    const clientCallArgs: string[] = [];
-    if (signature.hasParams) clientCallArgs.push('params');
-    if (signature.hasQuery) clientCallArgs.push('query');
+    params.push(`options?: {
+    enabled?: boolean;
+    select?: <TData = ${inferResponse}>(data: ${inferResponse}) => TData;
+  }`);
 
     return `/**
  * ${endpoint.description || `Query hook for ${name}`}
- * @tags ${queryTags.join(', ') || 'none'}
+ * @tags ${queryTags.join(", ") || "none"}
  */
-export function ${hookName}(
-  ${paramsList}
-) {
+export function ${hookName}(${params.join(",\n  ")}) {
   return useQuery({
-    queryKey: [${queryKeyParts.join(', ')}] as const,
-    queryFn: () => apiClient.${name}(${clientCallArgs.join(', ')}),
+    ...apiQueryOptions.${resource}.${optionName}(${optionParams.join(", ")}),
     ...options,
   });
 }`;
   }
 
-  private generateMutationHook(name: string, endpoint: APIEndpoint): string {
-    const hookPrefix = this.context.config.options?.hookPrefix || 'use';
-    const hookName = `${hookPrefix}${this.capitalize(name)}`;
-    const signature = this.getEndpointSignature(name, endpoint);
-    const invalidationTags = this.getInvalidationTags(endpoint);
+  private generateMutationHooks(): string {
+    const hooks: string[] = [];
+    Object.entries(this.context.apiConfig.endpoints).forEach(
+      ([name, endpoint]) => {
+        if (endpoint.method !== "GET")
+          hooks.push(this.generateMutationHook(name, endpoint));
+      },
+    );
+    return hooks.join("\n\n");
+  }
 
-    let inputType = 'void';
-    if (signature.hasParams && signature.hasBody) {
-      inputType = `{ params: ${signature.paramType}; body: ${signature.bodyType} }`;
-    } else if (signature.hasParams) {
-      inputType = signature.paramType;
-    } else if (signature.hasBody) {
-      inputType = signature.bodyType;
+  private generateMutationHook(name: string, endpoint: APIEndpoint): string {
+    const hookName = `use${this.capitalize(name)}`;
+    const resource = this.getResourceFromEndpoint(name, endpoint);
+    const inferParams = this.inferNonNull(
+      `typeof apiConfig.endpoints.${name}.params`,
+    );
+    const inferBody = this.inferNonNull(
+      `typeof apiConfig.endpoints.${name}.body`,
+    );
+    const inferResponse = this.inferNonNull(
+      `typeof apiConfig.endpoints.${name}.response`,
+    );
+
+    const resourceHasQueries = this.resourceHasQueryEndpoints(resource);
+
+    let inputType: string;
+    let fnBody: string;
+
+    if (endpoint.params && endpoint.body) {
+      inputType = `{ params: ${inferParams}; body: ${inferBody}; }`;
+      fnBody = `({ params, body }: ${inputType}) => apiClient.${name}(params, body)`;
+    } else if (endpoint.params) {
+      inputType = `${inferParams}`;
+      fnBody = `(params: ${inputType}) => apiClient.${name}(params)`;
+    } else if (endpoint.body) {
+      inputType = `${inferBody}`;
+      fnBody = `(body: ${inputType}) => apiClient.${name}(body)`;
+    } else {
+      inputType = "void";
+      fnBody = `() => apiClient.${name}()`;
     }
 
-    const invalidationQueries = invalidationTags.length > 0
-      ? invalidationTags
-          .map((tag) => `      queryClient.invalidateQueries({ queryKey: ['${tag}'] });`)
-          .join('\n')
-      : '      // No automatic invalidations';
+    const invalidate = resourceHasQueries
+      ? `queryClient.invalidateQueries({ queryKey: queryKeys.${resource}.all });`
+      : "";
 
     return `/**
  * ${endpoint.description || `Mutation hook for ${name}`}
- * @tags ${endpoint.tags?.join(', ') || 'none'}
+ * @tags ${endpoint.tags?.join(", ") || "none"}
  */
-export function ${hookName}(
-  options?: Omit<UseMutationOptions<${signature.responseType}, Error, ${inputType}>, 'mutationFn'>
-) {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: ${inputType === 'void' ? '() => {' : '(input) => {'}
-      ${this.generateMutationCall(name, signature.hasParams, signature.hasBody)}
-    },
-    onSuccess: (data, variables, context) => {
-      // Invalidate related queries
-${invalidationQueries}
-      
-      // Call user's onSuccess if provided
-      options?.onSuccess?.(data, variables, context);
-    },
-    ...options,
-  });
-}`;
+    export function ${hookName}(options?: {
+      onSuccess?: (data: ${inferResponse}, variables: ${inputType}, context: unknown) => void;
+      onError?: (error: Error, variables: ${inputType}, context: unknown) => void;
+      onSettled?: (data: ${inferResponse} | undefined, error: Error | null, variables: ${inputType}, context: unknown) => void;
+      onMutate?: (variables: ${inputType}) => Promise<unknown> | unknown;
+    }) {
+      ${invalidate ? "const queryClient = useQueryClient();" : ""}
+      return useMutation({
+	mutationFn: ${fnBody},
+	onSuccess: (data, variables, context) => {
+	  ${invalidate}
+	  options?.onSuccess?.(data, variables, context);
+	},
+	onError: options?.onError,
+	onSettled: options?.onSettled,
+	onMutate: options?.onMutate,
+      });
+    }`;
   }
 }

@@ -29,12 +29,16 @@ export class ClientGenerator extends BaseGenerator {
 
   private generateClientContent(): string {
     const useClientDirective = this.context.config.options?.useClientDirective ?? true;
+    const outputPath = path.join(this.context.config.outputDir, 'types.ts');
+    const endpointsPath = path.join(this.context.config.endpointsPath);
+    const relativePath = path.relative(path.dirname(outputPath), endpointsPath).replace(/\\/g, '/');
     
     return `${useClientDirective ? "'use client';\n" : ''}
 import { createAPIClient } from '@cushin/api-codegen/client';
 import type { AuthCallbacks } from '@cushin/api-codegen/client';
-import { apiConfig } from '../config/endpoints';
+import { apiConfig } from '${relativePath}';
 import type { APIEndpoints } from './types';
+import { z } from 'zod';
 
 // Type-safe API client methods
 type APIClientMethods = {
@@ -64,9 +68,13 @@ type APIClientMethods = {
 };
 
 // Export singleton instance (will be initialized later)
-export let apiClient: APIClientMethods & {
+export let baseClient: APIClientMethods & {
   refreshAuth: () => Promise<void>;
   updateAuthCallbacks: (callbacks: AuthCallbacks) => void;
+};
+
+export const apiClient = {
+${this.generateApiClientMethods()}
 };
 
 /**
@@ -88,8 +96,8 @@ export let apiClient: APIClientMethods & {
  * initializeAPIClient(authCallbacks);
  */
 export const initializeAPIClient = (authCallbacks: AuthCallbacks) => {
-  apiClient = createAPIClient(apiConfig, authCallbacks) as any;
-  return apiClient;
+  baseClient = createAPIClient(apiConfig, authCallbacks) as any;
+  return baseClient;
 };
 
 // Export for custom usage
@@ -137,4 +145,56 @@ type APIClientMethods = {
 export const serverClient = createAPIClient(apiConfig) as APIClientMethods;
 `;
   }
+
+  private generateApiClientMethods(): string {
+    const methods: string[] = [];
+
+    Object.entries(this.context.apiConfig.endpoints).forEach(([name, endpoint]) => {
+      const inferParams = this.inferNonNull(
+        `typeof apiConfig.endpoints.${name}.params`,
+      );
+      const inferQuery = this.inferNonNull(
+        `typeof apiConfig.endpoints.${name}.query`,
+      );
+      const inferBody = this.inferNonNull(
+        `typeof apiConfig.endpoints.${name}.body`,
+      );
+      const inferResponse = this.inferNonNull(
+        `typeof apiConfig.endpoints.${name}.response`,
+      );
+
+      if (endpoint.method === "GET") {
+        if (endpoint.params && endpoint.query) {
+          methods.push(`  ${name}: (params: ${inferParams}, query?: ${inferQuery}): Promise<${inferResponse}> => 
+    (baseClient as any).${name}(params, query),`);
+        } else if (endpoint.params) {
+          methods.push(`  ${name}: (params: ${inferParams}): Promise<${inferResponse}> => 
+    (baseClient as any).${name}(params),`);
+        } else if (endpoint.query) {
+          methods.push(`  ${name}: (query?: ${inferQuery}): Promise<${inferResponse}> => 
+    (baseClient as any).${name}(query),`);
+        } else {
+          methods.push(`  ${name}: (): Promise<${inferResponse}> => 
+    (baseClient as any).${name}(),`);
+        }
+      } else {
+        if (endpoint.params && endpoint.body) {
+          methods.push(`  ${name}: (params: ${inferParams}, body: ${inferBody}): Promise<${inferResponse}> => 
+    (baseClient as any).${name}(params, body),`);
+        } else if (endpoint.params) {
+          methods.push(`  ${name}: (params: ${inferParams}): Promise<${inferResponse}> => 
+    (baseClient as any).${name}(params),`);
+        } else if (endpoint.body) {
+          methods.push(`  ${name}: (body: ${inferBody}): Promise<${inferResponse}> => 
+    (baseClient as any).${name}(body),`);
+        } else {
+          methods.push(`  ${name}: (): Promise<${inferResponse}> => 
+    (baseClient as any).${name}(),`);
+        }
+      }
+    });
+
+    return methods.join("\n");
+  }
+
 }
