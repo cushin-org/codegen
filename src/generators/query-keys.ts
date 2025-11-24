@@ -15,9 +15,14 @@ export class QueryKeysGenerator extends BaseGenerator {
   }
 
   private generateContent(): string {
+    const outputPath = path.join(this.context.config.outputDir, "types.ts");
+    const endpointsPath = path.join(this.context.config.endpointsPath);
+    const relativePath = path
+      .relative(path.dirname(outputPath), endpointsPath)
+      .replace(/\\/g, "/");
     const content = `// Auto-generated query keys
 import { z } from 'zod';
-import { apiConfig } from '../config/endpoints';
+import { apiConfig } from '${relativePath}';
 
 export const queryKeys = {
 ${this.generateQueryKeysContent()}

@@ -14,12 +14,17 @@ export class QueryOptionsGenerator extends BaseGenerator {
     await fs.writeFile(outputPath, content, "utf-8");
   }
   private generateContent(): string {
+    const outputPath = path.join(this.context.config.outputDir, "types.ts");
+    const endpointsPath = path.join(this.context.config.endpointsPath);
+    const relativePath = path
+      .relative(path.dirname(outputPath), endpointsPath)
+      .replace(/\\/g, "/");
     const content = `// Auto-generated query options
 import { queryOptions } from '@tanstack/react-query';
-import { apiClient } from './api-client';
+import { apiClient } from './client';
 import { queryKeys } from './query-keys';
 import { z } from 'zod';
-import { apiConfig } from '../config/endpoints';
+import { apiConfig } from '${relativePath}';
 
 ${this.generateQueryOptionsContent()}
 
