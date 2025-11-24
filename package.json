@@ -1,6 +1,6 @@
 {
   "name": "@cushin/api-codegen",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Type-safe API client generator for React/Next.js with automatic hooks and server actions generation",
   "type": "module",
   "main": "./dist/index.js",
