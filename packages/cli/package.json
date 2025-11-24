@@ -1,5 +1,5 @@
 {
-  "name": "@cushin/cli",
+  "name": "@cushin/codegen-cli",
   "version": "2.0.0",
   "description": "Shared CLI utilities for Cushin code generators",
   "type": "module",
