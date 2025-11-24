@@ -1,4 +1,4 @@
-import type { APIConfig, APIEndpoint } from "../config/schema.js";
+import type { APIConfig, APIEndpoint } from "@cushin/api-runtime";
 import type { ResolvedConfig } from "../config/index.js";
 
 export interface GeneratorContext {

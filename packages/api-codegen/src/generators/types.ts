@@ -25,7 +25,7 @@ import { apiConfig } from '${relativePath}';
 
 
 // Re-export endpoint configuration types
-export type { APIConfig, APIEndpoint, HTTPMethod } from './schema';
+export type { APIConfig, APIEndpoint, HTTPMethod } from '@cushin/api-runtime';
 
 /**
  * Type helper to extract params schema from an endpoint

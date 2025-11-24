@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import { setupCLIProgram, setupGenerateCommand, setupInitCommand, setupValidateCommand } from '@cushin/cli';
+import { setupCLIProgram, setupGenerateCommand, setupInitCommand, setupValidateCommand } from '@cushin/codegen-cli';
 import { loadConfig, validateConfig } from './config/index.js';
 import { CodegenCore } from './core/codegen.js';
 import path from 'path';

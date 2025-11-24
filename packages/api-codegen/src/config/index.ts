@@ -1,6 +1,6 @@
 import { cosmiconfig } from "cosmiconfig";
 import path from "path";
-import type { APIConfig } from "./schema.js";
+import type { APIConfig } from "@cushin/api-runtime";
 
 export interface UserConfig {
   /**

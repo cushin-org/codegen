@@ -1,8 +1,8 @@
-import { createJiti } from 'jiti';
-import type { APIConfig } from '../config/schema.js';
-import type { ResolvedConfig } from '../config/index.js';
-import { CodeGenerator } from '../generators/index.js';
-import { fileURLToPath } from 'url';
+import { createJiti } from "jiti";
+import type { APIConfig } from "@cushin/api-runtime";
+import type { ResolvedConfig } from "../config/index.js";
+import { CodeGenerator } from "../generators/index.js";
+import { fileURLToPath } from "url";
 
 export class CodegenCore {
   constructor(private config: ResolvedConfig) {}

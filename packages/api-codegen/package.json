@@ -1,6 +1,6 @@
 {
   "name": "@cushin/api-codegen",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Type-safe API client generator for React/Next.js with automatic hooks and server actions generation",
   "type": "module",
   "main": "./dist/index.js",
@@ -16,18 +16,6 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
-    },
-    "./client": {
-      "types": "./dist/runtime/client.d.ts",
-      "import": "./dist/runtime/client.js"
-    },
-    "./config": {
-      "types": "./dist/config/index.d.ts",
-      "import": "./dist/config/index.js"
-    },
-    "./schema": {
-      "types": "./dist/config/schema.d.ts",
-      "import": "./dist/config/schema.js"
     }
   },
   "files": [
@@ -71,7 +59,8 @@
     }
   },
   "dependencies": {
-    "@cushin/cli": "workspace:*",
+    "@cushin/api-runtime": "workspace:*",
+    "@cushin/codegen-cli": "workspace:*",
     "chalk": "^5.3.0",
     "commander": "^12.0.0",
     "conventional-changelog": "^7.1.1",

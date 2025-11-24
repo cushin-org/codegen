@@ -1,5 +1,5 @@
 import ky, { HTTPError } from "ky";
-import type { APIConfig, APIEndpoint } from "../config/schema.js";
+import type { APIConfig, APIEndpoint } from "./schema.js";
 
 export interface AuthTokens {
   accessToken: string;

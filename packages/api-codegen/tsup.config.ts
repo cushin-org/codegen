@@ -10,7 +10,7 @@ export default defineConfig([
     sourcemap: true,
     clean: true,
     external: [
-      '@cushin/cli',
+      '@cushin/codegen-cli',
       'ky',
       'zod',
       '@tanstack/react-query',
@@ -35,7 +35,7 @@ export default defineConfig([
     dts: false,
     sourcemap: true,
     external: [
-      '@cushin/cli',
+      '@cushin/codegen-cli',
       'ky',
       'zod',
       '@tanstack/react-query',

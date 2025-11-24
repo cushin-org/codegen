@@ -40,8 +40,8 @@ export class ClientGenerator extends BaseGenerator {
       .replace(/\\/g, "/");
 
     return `${useClientDirective ? "'use client';\n" : ""}
-import { createAPIClient } from './core';
-import type { AuthCallbacks } from './core';
+import { createAPIClient } from '@cushin/api-runtime';
+import type { AuthCallbacks } from '@cushin/api-runtime';
 import { apiConfig } from '${relativePath}';
 import { z } from 'zod';
 

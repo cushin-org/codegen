@@ -1,6 +1,6 @@
-import type { z } from 'zod';
+import type { z } from "zod";
 
-export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+export type HTTPMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
 export interface APIEndpoint {
   path: string;
@@ -64,8 +64,8 @@ export function defineEndpoint<
 /**
  * Helper to define multiple endpoints
  */
-export function defineEndpoints<
-  T extends Record<string, APIEndpoint>,
->(endpoints: T): T {
+export function defineEndpoints<T extends Record<string, APIEndpoint>>(
+  endpoints: T,
+): T {
   return endpoints;
 }

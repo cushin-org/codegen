@@ -22,7 +22,7 @@
     "verbatimModuleSyntax": true,
     "baseUrl": ".",
     "paths": {
-      "@cushin/cli": ["packages/cli/src"],
+      "@cushin/codegen-cli": ["packages/cli/src"],
       "@cushin/api-codegen": ["packages/api-codegen/src"]
     }
   }

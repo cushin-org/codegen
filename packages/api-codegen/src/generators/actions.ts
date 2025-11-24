@@ -1,7 +1,7 @@
-import fs from 'fs/promises';
-import path from 'path';
-import { BaseGenerator } from './base.js';
-import type { APIEndpoint } from '../config/schema';
+import fs from "fs/promises";
+import path from "path";
+import { BaseGenerator } from "./base.js";
+import type { APIEndpoint } from "@cushin/api-runtime";
 
 export class ServerActionsGenerator extends BaseGenerator {
   async generate(): Promise<void> {
