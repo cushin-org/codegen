@@ -22,24 +22,12 @@ export class HooksGenerator extends BaseGenerator {
       .replace(/\\/g, "/");
 
     const content = `${useClientDirective ? "'use client';\n" : ""}
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { 
-  UseQueryOptions, 
-  UseMutationOptions,
-  QueryKey 
-} from '@tanstack/react-query';
-import { apiClient } from './client';
-import type { 
-  APIEndpoints, 
-  ExtractBody, 
-  ExtractParams, 
-  ExtractQuery, 
-  ExtractResponse 
-} from './types';
-import { queryKeys } from './query-keys';
-${this.hasQueryOptions() ? "import { apiQueryOptions } from './query-options';" : ""}
-import { z } from 'zod';
-import { apiConfig } from '${relativePath}';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiClient } from "./client";
+import { queryKeys } from "./query-keys";
+import { apiQueryOptions } from "./query-options";
+import { z } from "zod";
+import { apiConfig } from "${relativePath}";
 
 ${this.generateQueryHooks()}
 ${this.generateMutationHooks()}
