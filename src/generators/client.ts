@@ -90,12 +90,9 @@ ${this.generateApiClientMethods()}
  * @example
  * const authCallbacks = {
  *   getTokens: () => getStoredTokens(),
- *   setTokens: (tokens) => storeTokens(tokens),
- *   clearTokens: () => clearStoredTokens(),
  *   onAuthError: () => router.push('/login'),
  *   onRefreshToken: async () => {
- *     const newToken = await refreshAccessToken();
- *     return newToken;
+ *     await refreshAccessToken();
  *   },
  * };
  * 

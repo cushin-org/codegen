@@ -8,7 +8,6 @@ export interface AuthTokens {
 
 export interface AuthCallbacks {
   getTokens: () => Promise<AuthTokens | null>;
-  setTokens: (tokens: AuthTokens) => void;
   onAuthError?: () => void;
   onRefreshToken?: () => Promise<void>;
 }
