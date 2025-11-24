@@ -7,6 +7,8 @@ import type { GeneratorContext } from "./base.js";
 import { QueryKeysGenerator } from "./query-keys.js";
 import { QueryOptionsGenerator } from "./query-options.js";
 import { PrefetchGenerator } from "./prefetch.js";
+import { SchemaGenerator } from "./schema.js";
+import { CoreGenerator } from "./core.js";
 
 export class CodeGenerator {
   constructor(private context: GeneratorContext) {}
@@ -24,6 +26,8 @@ export class CodeGenerator {
 
     // Always generate types
     generators.push(new TypesGenerator(this.context));
+    generators.push(new SchemaGenerator(this.context));
+    generators.push(new CoreGenerator(this.context));
 
     // Generate client if enabled
     if (this.context.config.generateClient) {
