@@ -8,7 +8,7 @@
   "author": "Le Viet Hoang",
   "repository": {
     "type": "git",
-    "url": "https://github.com/cushin-org/api-codegen.git"
+    "url": "https://github.com/cushin-org/codegen.git"
   },
   "workspaces": [
     "packages/*"
@@ -19,12 +19,18 @@
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
     "lint": "pnpm -r lint",
-    "prepublishOnly": "pnpm build"
+    "prepublishOnly": "pnpm build",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "pnpm build && changeset publish",
+    "prerelease": "pnpm build",
+    "publish:dry": "changeset publish --dry-run"
   },
   "engines": {
     "node": ">=18.0.0"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.29.7",
     "@types/node": "^20.11.0",
     "eslint": "^8.56.0",
     "typescript": "^5.3.0"
