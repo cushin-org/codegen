@@ -1,6 +1,6 @@
 {
   "name": "@cushin/api-runtime",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Runtime utilities for Cushin API codegen - types, schemas, and HTTP client",
   "type": "module",
   "main": "./dist/index.js",
