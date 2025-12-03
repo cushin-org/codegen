@@ -1,6 +1,6 @@
 {
   "name": "cushin-monorepo",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Cushin code generators monorepo",
   "private": true,
   "type": "module",

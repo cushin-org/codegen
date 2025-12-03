@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import { BaseGenerator } from "./base.js";
 
-export class ServerActionsGenerator extends BaseGenerator {
+export class IndexGenerator extends BaseGenerator {
   async generate(): Promise<void> {
     const content = this.generateContent();
     const outputPath = path.join(this.context.config.outputDir, "actions.ts");
